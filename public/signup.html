@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar - Nail Designer</title>
+    <link rel="stylesheet" href="signup.css">
+
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Cadastrar</h1>
+    </header>
+
+    <form id="signupForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
+        <label for="username">Usuário:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <span id="availability-message"></span>
+        <button type="button" onclick="signup()">Cadastrar</button>
+    </form>
+</body>
+</html>

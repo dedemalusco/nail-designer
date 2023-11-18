@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A & J Nail Solution</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>A & J Nail Solution</h1>
+    </header>
+
+    <input type="hidden" id="username" value="">
+    <section id="produtos">
+        <div class="produto">
+            <img src="esmalte1.jpg" alt="Esmalte 1" class="esmalte">
+            <h3>Esmalte 1</h3>
+            <p class="preco">R$5.99</p>
+            <button onclick="adicionarAoCarrinho('Esmalte 1', 5.99)">Adicionar ao Carrinho</button>
+        </div>
+
+        <div class="produto">
+            <img src="esmalte2.jpg" alt="Esmalte 2" class="esmalte">
+            <h3>Esmalte 2</h3>
+            <p class="preco">R$7.99</p>
+            <button onclick="adicionarAoCarrinho('Esmalte 2', 7.99)">Adicionar ao Carrinho</button>
+        </div>
+
+        <div class="produto">
+            <img src="esmalte3.jpg" alt="Esmalte 3" class="esmalte">
+            <h3>Esmalte 3</h3>
+            <p class="preco">R$6.50</p>
+            <button onclick="adicionarAoCarrinho('Esmalte 3', 6.50)">Adicionar ao Carrinho</button>
+        </div>
+
+        <!-- Adicione mais produtos conforme necessário -->
+    </section>
+    <section id="carrinho">
+        <h2>Carrinho</h2>
+        <ul id="lista-carrinho"></ul>
+        <p id="total">Total: R$<span id="total-valor">0.00</span></p>
+        <button onclick="pagar()">Enviar para um atendente</button>
+    </section>
+    
+
+    <script src="script.js" defer></script>
+</body>
+</html>
