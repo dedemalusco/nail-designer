@@ -1,23 +1,59 @@
 const express = require('express');
-const sqlite3 = require('sqlite3');
+const cors = require('cors');
+const app = express();
+const port = 3000;
+
+// Determine a origem com base no ambiente
+const allowedOrigins = ['*']; // Adapte para o seu domínio Ngrok
+const corsOptions = {
+  origin: allowedOrigins,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+
+const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const path = require('path');
 const jwt = require('jsonwebtoken');
-
-const app = express();
-const port = 3000;
 const dbPath = path.join(__dirname, 'public', 'database.db');
 const db = new sqlite3.Database(dbPath);
 const saltRounds = 10;
-const secretKey = 'suaChaveSecreta'; // Troque isso por uma chave secreta mais segura
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Remova a linha "let carrinho = [];" do início do arquivo.
+db.serialize(() => {
+    db.run("CREATE TABLE IF NOT EXISTS users (id INT, username TEXT, password TEXT)");
+  
+    // Restante do código...
+  
+    // Exemplo de consulta para verificar se a tabela de usuários existe
+    db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='users'", (err, row) => {
+      if (!row) {
+        console.error('Tabela de usuários não encontrada no banco de dados.');
+      } else {
+        console.log('Tabela de usuários encontrada no banco de dados.');
+      }
+    });
+})
 
+function generateToken(userId) {
+ const payload = { userId };
+ const secret = 'your_jwt_secret';
+ const options = { expiresIn: '1h' };
+
+ return jwt.sign(payload, secret, options);
+}
 app.get('/check-email-availability', async (req, res) => {
     const { email } = req.query;
 
@@ -94,29 +130,6 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// Função para gerar token
-function generateToken(username) {
-    return jwt.sign({ username }, secretKey, { expiresIn: '1h' });
-}
-
-// Função para verificar token
-function verifyToken(req, res, next) {
-    const token = req.header('Authorization');
-
-    if (!token) {
-        return res.status(403).json({ erro: 'Token não fornecido.' });
-    }
-
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ erro: 'Token inválido.' });
-        }
-
-        req.username = decoded.username;
-        next();
-    });
-}
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -162,19 +175,6 @@ app.post('/login', async (req, res) => {
 
     });
 });
-app.post('/registrar-acao', async (req, res) => {
-    const { username, acao, produto, preco } = req.body;
-
-    db.run('INSERT INTO acoes_cliente (username, acao, produto, preco) VALUES (?, ?, ?, ?)', [username, acao, produto, preco], (err) => {
-        if (err) {
-            console.error('Erro ao registrar ação do cliente:', err.message);
-            return res.status(500).json({ erro: 'Erro interno ao registrar ação do cliente.' });
-        }
-
-        console.log('Ação do cliente registrada com sucesso!');
-        res.json({ sucesso: true });
-    });
-});
 
 app.get('/check-availability', async (req, res) => {
     const { username } = req.query;
@@ -201,6 +201,6 @@ app.get('/check-availability', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Servidor rodando em http://0.0.0.0:${port}`);
 });
